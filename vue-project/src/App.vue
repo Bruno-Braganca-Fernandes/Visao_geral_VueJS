@@ -26,6 +26,11 @@ const estaAutorizado = true
 const estado = reactive({
   contador: 0,
   email: '',
+  saldo: 5000,
+  transferindo: 0,
+  nomes: ['Bruno', 'Dafny', 'Abelardo', 'Betania'],
+nomeAInserir: ''
+
 })
 
 function incrementar() {
@@ -39,6 +44,25 @@ function decrementar() {
 function alteraEmail(evento) {
   estado.email = evento.target.value
 }
+
+function mostraSaldoFuturo() {
+  const {saldo, transferindo} = estado
+  return saldo - transferindo
+}
+
+function validaValorTranferencia() {
+    const {saldo, transferindo} = estado
+  return saldo >= transferindo
+}
+
+function cadastraNome() {
+  if(estado.nomeAInserir.length >= 3){
+    estado.nomes.push(estado.nomeAInserir)
+  } else {
+    alert("Digite mais caracteres")
+  }
+}
+
 </script>
 
 <template>
@@ -66,6 +90,41 @@ function alteraEmail(evento) {
 {{ estado.email }}
 <input type="email" @keyup="alteraEmail">
 
+  <br>
+  <hr>
+
+  Saldo: {{ estado.saldo }} <br>
+  Transferindo: {{ estado.transferindo }} <br>
+  Saldo depois da transferência: {{ mostraSaldoFuturo() }} <br>
+  <input class="campo" :class="{ invalido: !validaValorTranferencia() }" @keyup="evento => estado.transferindo = evento.target.value" type="number" placeholder="Quantia para transferir">
+<button v-if="validaValorTranferencia()">Transferir</button>
+<span v-else>Valor maior que o saldo</span>
+
+<br> <hr>
+
+<ul>
+  <li v-for="nome in estado.nomes">
+    {{ nome }}
+  </li>
+</ul>
+<input @keyup="evento => estado.nomeAInserir = evento.target.value" type="text" placeholder="Digite um novo nome">
+<button @click="cadastraNome()" type="button">Cadastrar nome</button>
+
+<h3 v-for="nome in estado.nomes">{{ nome }}</h3>
 </template>
 
-<style scoped></style>
+<style scoped>
+img{
+  max-width: 200px;
+}
+
+.invalido{
+  outline-color:red ;
+  border-color: red;
+}
+
+.campo{
+  border: 2px solid #000;
+}
+
+</style>
